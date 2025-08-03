@@ -33,14 +33,37 @@ DUMMY_ARTICLES = [
 ]
 
 def dummy_summarize(text: str) -> str:
-    # For now, just return first 10 chars + '...'
-    return text[:10] + "..."
+    # For now, just return first 25 chars + '...'
+    return text[:25] + "..."
+
+async def fetch_articles(topic: str):
+    params = {
+        "apiKey": NEWSAPI_KEY,
+        "category": topic,
+        "language": "en",
+        "pageSize": 5
+    }
+    async with httpx.AsyncClient() as client:
+        response = await client.get(NEWSAPI_URL, params=params)
+
+        data = response.json()
+        articles = data.get("articles", [])
+        simplified = []
+        for a in articles:
+            # Simplify article content: if no content, fallback to description or title
+            content = a.get("content") or a.get("description") or a.get("title")
+            simplified.append({
+                "title": a.get("title"),
+                "content": content,
+                "link": a.get("url")
+            })
+        return simplified
 
 @app.get("/api/summaries")
-async def get_summaries(topic: str = Query(..., description="Topic to summarize news for")) -> List[Dict]:
-    # For MVP, ignore topic and return dummy articles with dummy summaries
+async def get_summaries(topic: str = Query(...)):
+    articles = await fetch_articles(topic)
     results = []
-    for article in DUMMY_ARTICLES:
+    for article in articles:
         summary = dummy_summarize(article["content"])
         results.append({
             "title": article["title"],
