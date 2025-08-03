@@ -1,7 +1,22 @@
 from fastapi import FastAPI, Query
 from typing import List, Dict
+import os
+import httpx
+from cerebras.cloud.sdk import Cerebras
+from dotenv import load_dotenv
 
+NEWSAPI_URL = "https://newsapi.org/v2/top-headlines"
 app = FastAPI()
+
+load_dotenv()
+NEWSAPI_KEY = os.environ.get("NEWSAPI_KEY")
+CEREBRAS_API_KEY = os.environ.get("CEREBRAS_API_KEY")
+
+client = Cerebras(api_key=CEREBRAS_API_KEY)
+
+@app.get("/")
+async def root():
+    return {"message": "QuickDigest backend running"}
 
 # Dummy articles
 DUMMY_ARTICLES = [
