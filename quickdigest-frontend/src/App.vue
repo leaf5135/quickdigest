@@ -30,7 +30,17 @@
 <script setup>
 import { ref } from "vue";
 
-const topics = ["technology", "science", "gaming"];
+const topics = [
+  "All",           // Represents default/no specific topic
+  "Business",
+  "Entertainment",
+  "General",
+  "Health",
+  "Science",
+  "Sports",
+  "Technology",
+  "Gaming"
+];
 const topic = ref("");
 const summaries = ref([]);
 const loading = ref(false);
@@ -41,7 +51,8 @@ async function selectTopic(t) {
   loading.value = true;
 
   try {
-    const res = await fetch(`/api/summaries?topic=${t}`);
+    const query = t === "All" ? "" : `?topic=${t.toLowerCase()}`;
+    const res = await fetch(`/api/summaries${query}`);
     summaries.value = await res.json();
   } catch (err) {
     alert("Failed to fetch summaries");
