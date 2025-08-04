@@ -15,10 +15,6 @@ CEREBRAS_API_KEY = os.environ.get("CEREBRAS_API_KEY")
 
 client = Cerebras(api_key=CEREBRAS_API_KEY)
 
-@app.get("/")
-async def root():
-    return {"message": "QuickDigest backend running"}
-
 # Dummy articles
 DUMMY_ARTICLES = [
     {
@@ -86,13 +82,19 @@ async def fetch_articles(topic: str):
 
 @app.get("/api/summaries")
 async def get_summaries(topic: str = Query(...)):
-    articles = await fetch_articles(topic)
+    # articles = await fetch_articles(topic)
     results = []
-    for article in articles:
-        summary = await summarize(article["content"])
+    # for article in articles:
+    for article in DUMMY_ARTICLES:
+        # summary = await dummy_summarize(article["content"])
+        summary = dummy_summarize(article["content"])
         results.append({
             "title": article["title"],
             "summary": summary,
             "link": article["link"]
         })
     return results
+
+@app.get("/")
+async def root():
+    return {"message": "QuickDigest backend running"}
