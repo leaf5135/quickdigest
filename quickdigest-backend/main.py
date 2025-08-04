@@ -82,12 +82,10 @@ async def fetch_articles(topic: str):
 
 @app.get("/api/summaries")
 async def get_summaries(topic: str = Query(...)):
-    # articles = await fetch_articles(topic)
+    articles = await fetch_articles(topic)
     results = []
-    # for article in articles:
-    for article in DUMMY_ARTICLES:
-        # summary = await dummy_summarize(article["content"])
-        summary = dummy_summarize(article["content"])
+    for article in articles:
+        summary = await summarize(article["content"])
         results.append({
             "title": article["title"],
             "summary": summary,
