@@ -37,7 +37,6 @@ import { ref } from "vue";
 
 // Topic list with proper display formatting
 const topics = [
-  "All",           // Default: all categories
   "Business",
   "Entertainment",
   "General",
@@ -59,7 +58,7 @@ async function selectTopic(t) {
   loading.value = true;
 
   try {
-    const query = t === "All" ? "" : `?topic=${t.toLowerCase()}`;
+    const query = `?topic=${t.toLowerCase()}`;
     const res = await fetch(`/api/summaries${query}`);
     summaries.value = await res.json();
   } catch (err) {
